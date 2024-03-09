@@ -7,7 +7,7 @@ class Motion:
         self.y_delta = y_delta
 
 
-class Direction(Enum):
+class Movement(Enum):
     STAY = Motion(0, 0)
     RIGHT = Motion(0, 1)
     LEFT = Motion(0, -1)

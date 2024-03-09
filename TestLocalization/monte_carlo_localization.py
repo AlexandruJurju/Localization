@@ -1,65 +1,114 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from movement import Direction
+from movement import Movement
 
 
-class MonteCarloLocalization():
+class MonteCarloLocalization:
     """Performing Bayesian Updating to Produce a Distribution of Likely Positions in the Environment"""
 
     def __init__(self, world, measurements, movements, sensor_prob_correct, prob_move):
         self.world = world
         self.measurements = measurements
-        self.motions = movements
+        self.movements = movements
         self.sensor_prob_correct = sensor_prob_correct
         self.prob_move = prob_move
 
         # initialize the Uniform Prior
         pinit = 1.0 / float(len(world)) / float(len(world[0]))
         self.p = [[pinit for _ in range(len(world[0]))] for _ in range(len(world))]
-        self.visualize_grid(self.p)
 
     def sense(self, p, world, measurement):
-        """Compute probabilities after sensing the world (with some confidence)"""
+        """
+        Compute probabilities after sensing the world (with some confidence).
+
+        Parameters:
+            p (list of lists): Probability distribution.
+            world (list of lists): World grid.
+            measurement (str): Measurement obtained from the world.
+
+        Returns:
+            list of lists: Updated probability distribution after sensing.
+        """
         q = [[0.0 for _ in range(len(world[0]))] for _ in range(len(world))]
 
-        s = 0.0
+        total_probability = 0.0
         for i in range(len(p)):
             for j in range(len(p[i])):
                 hit = (measurement == world[i][j])
-                q[i][j] = p[i][j] * (hit * self.sensor_prob_correct + (1 - hit) * (1 - self.sensor_prob_correct))
-                s += q[i][j]
 
-        # normalize
+                # Calculate probability and update q matrix
+                if hit:
+                    q[i][j] = p[i][j] * self.sensor_prob_correct
+                else:
+                    q[i][j] = p[i][j] * (1 - self.sensor_prob_correct)
+
+                total_probability += q[i][j]
+
+        # normalize probability values
         for i in range(len(q)):
             for j in range(len(p[0])):
-                q[i][j] /= s
+                q[i][j] /= total_probability
 
         return q
 
-    def move(self, p, motion: [Direction]):
-        """Compute probabilities after moving through world (with some confidence)"""
+    def move(self, p, motion: [Movement]):
+        """
+        Compute probabilities after moving through the world (with some confidence).
+
+        Parameters:
+            p (list of lists): Probability distribution before movement.
+            motion (Movement): Movement direction and magnitude.
+
+        Returns:
+            list of lists: Updated probability distribution after movement.
+        """
+        # Initialize new probability matrix
         q = [[0.0 for _ in range(len(self.world[0]))] for _ in range(len(self.world))]
 
+        # Iterate through each cell in the probability matrix
         for i in range(len(p)):
             for j in range(len(p[0])):
+                # Get the x and y delta values for the motion
                 motion_value = motion.value
-                q[i][j] = (self.prob_move * p[(i - motion_value.x_delta) % len(p)][(j - motion_value.y_delta) % len(p[i])]) + ((1 - self.prob_move) * p[i][j])
+
+                # Calculate the new position after applying the motion, considering edge wrapping
+                new_i = (i - motion_value.x_delta) % len(p)
+                new_j = (j - motion_value.y_delta) % len(p[i])
+
+                # Calculate probabilities for staying and moving
+                stay_probability = (1 - self.prob_move) * p[i][j]
+                move_probability = self.prob_move * p[new_i][new_j]
+
+                # Update the probability matrix
+                q[i][j] = move_probability + stay_probability
+
         return q
 
     def compute_posterior(self):
         """Call Computation"""
         p = self.p
         for i in range(len(self.measurements)):
-            p = self.move(p, self.motions[i])
-            self.visualize_grid(p)
+            p = self.move(p, self.movements[i])
+            # self.visualize_grid(p)
+            # self.show(p)
+
             p = self.sense(p, self.world, self.measurements[i])
-            self.visualize_grid(p)
+            # self.visualize_grid(p)
+            self.show(p)
 
         return p
 
     @staticmethod
+    def show(p):
+        """Prints the probability distribution"""
+        rows = ['[' + ','.join(map(lambda x: '{0:.5f}'.format(x), r)) + ']' for r in p]
+        print('[' + ',\n '.join(rows) + ']')
+        print("\n")
+
+    @staticmethod
     def visualize_grid(arr):
+        """Visualizes the probability grid"""
         grid = np.array(arr)
         fig, ax = plt.subplots()
 
