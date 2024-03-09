@@ -51,9 +51,11 @@ class MonteCarloLocalization:
 
         return posterior
 
+    # TODO dont use %
     def move(self, prior, motion: [Movement]):
         """
         Compute probabilities after moving through the world (with some confidence).
+        Move just shifts the probabilities
 
         Parameters:
             prior (list of lists): Probability distribution before movement.
