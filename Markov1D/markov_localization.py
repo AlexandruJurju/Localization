@@ -2,14 +2,12 @@ from Movement import Movement
 
 
 class MonteCarloLocalization:
-    def __init__(self, world: [str], measurements, movements, sensor_prob_correct, prob_move):
+    def __init__(self, world: [str], measurements, movements, sensor_prob_correct):
         self.world = world
         self.measurements = measurements
         self.movements = movements
         self.sensor_prob_correct = sensor_prob_correct
-        self.prob_move = prob_move
         self.probabilities = [1.0 / float(len(world))] * len(world)
-
         self.show(self.probabilities)
 
     def move(self, prior, movement: [Movement]):
@@ -20,10 +18,7 @@ class MonteCarloLocalization:
 
             new_i = (i - movement_value.x_delta) % len(prior)
 
-            stay_probability = (1 - self.prob_move) * prior[i]
-            move_probability = self.prob_move * prior[new_i]
-
-            posterior[i] = move_probability + stay_probability
+            posterior[i] = prior[new_i]
 
         return posterior
 

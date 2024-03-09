@@ -8,5 +8,5 @@ if __name__ == '__main__':
     movements = [Movement.RIGHT, Movement.LEFT]
     measurements = ['W', 'B']
 
-    localization = MonteCarloLocalization(world=colours, measurements=measurements, movements=movements, sensor_prob_correct=1.0, prob_move=1.0)
+    localization = MonteCarloLocalization(world=colours, measurements=measurements, movements=movements, sensor_prob_correct=1.0)
     posterior = localization.calculate_probabilities()

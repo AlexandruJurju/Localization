@@ -7,12 +7,11 @@ from movement import Movement
 class MonteCarloLocalization:
     """Performing Bayesian Updating to Produce a Distribution of Likely Positions in the Environment"""
 
-    def __init__(self, world, measurements, movements, sensor_prob_correct, prob_move):
+    def __init__(self, world, measurements, movements, sensor_prob_correct):
         self.world = world
         self.measurements = measurements
         self.movements = movements
         self.sensor_prob_correct = sensor_prob_correct
-        self.prob_move = prob_move
 
         # initialize the Uniform Prior
         pinit = 1.0 / float(len(world)) / float(len(world[0]))
@@ -76,12 +75,8 @@ class MonteCarloLocalization:
                 new_i = (i - motion_value.x_delta) % len(prior)
                 new_j = (j - motion_value.y_delta) % len(prior[i])
 
-                # Calculate probabilities for staying and moving
-                stay_probability = (1 - self.prob_move) * prior[i][j]
-                move_probability = self.prob_move * prior[new_i][new_j]
-
                 # Update the probability matrix
-                posterior[i][j] = move_probability + stay_probability
+                posterior[i][j] = prior[new_i][new_j]
 
         return posterior
 
