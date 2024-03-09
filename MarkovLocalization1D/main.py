@@ -1,4 +1,4 @@
-from MonteCarloLocalization import MonteCarloLocalization
+from markov_localization import MonteCarloLocalization
 from Movement import Movement
 
 if __name__ == '__main__':
