@@ -16,78 +16,78 @@ class MonteCarloLocalization:
 
         # initialize the Uniform Prior
         pinit = 1.0 / float(len(world)) / float(len(world[0]))
-        self.p = [[pinit for _ in range(len(world[0]))] for _ in range(len(world))]
+        self.probabilities = [[pinit for _ in range(len(world[0]))] for _ in range(len(world))]
 
-    def sense(self, p, world, measurement):
+    def sense(self, prior, world, measurement):
         """
         Compute probabilities after sensing the world (with some confidence).
 
         Parameters:
-            p (list of lists): Probability distribution.
+            prior (list of lists): Probability distribution.
             world (list of lists): World grid.
             measurement (str): Measurement obtained from the world.
 
         Returns:
             list of lists: Updated probability distribution after sensing.
         """
-        q = [[0.0 for _ in range(len(world[0]))] for _ in range(len(world))]
+        posterior = [[0.0 for _ in range(len(world[0]))] for _ in range(len(world))]
 
         total_probability = 0.0
-        for i in range(len(p)):
-            for j in range(len(p[i])):
+        for i in range(len(prior)):
+            for j in range(len(prior[i])):
                 hit = (measurement == world[i][j])
 
-                # Calculate probability and update q matrix
+                # Calculate probability and update posterior matrix
                 if hit:
-                    q[i][j] = p[i][j] * self.sensor_prob_correct
+                    posterior[i][j] = prior[i][j] * self.sensor_prob_correct
                 else:
-                    q[i][j] = p[i][j] * (1 - self.sensor_prob_correct)
+                    posterior[i][j] = prior[i][j] * (1 - self.sensor_prob_correct)
 
-                total_probability += q[i][j]
+                total_probability += posterior[i][j]
 
         # normalize probability values
-        for i in range(len(q)):
-            for j in range(len(p[0])):
-                q[i][j] /= total_probability
+        for i in range(len(posterior)):
+            for j in range(len(prior[0])):
+                posterior[i][j] /= total_probability
 
-        return q
+        return posterior
 
-    def move(self, p, motion: [Movement]):
+    def move(self, prior, motion: [Movement]):
         """
         Compute probabilities after moving through the world (with some confidence).
 
         Parameters:
-            p (list of lists): Probability distribution before movement.
+            prior (list of lists): Probability distribution before movement.
             motion (Movement): Movement direction and magnitude.
 
         Returns:
             list of lists: Updated probability distribution after movement.
         """
         # Initialize new probability matrix
-        q = [[0.0 for _ in range(len(self.world[0]))] for _ in range(len(self.world))]
+        posterior = [[0.0 for _ in range(len(self.world[0]))] for _ in range(len(self.world))]
 
         # Iterate through each cell in the probability matrix
-        for i in range(len(p)):
-            for j in range(len(p[0])):
+        for i in range(len(prior)):
+            for j in range(len(prior[0])):
                 # Get the x and y delta values for the motion
                 motion_value = motion.value
 
                 # Calculate the new position after applying the motion, considering edge wrapping
-                new_i = (i - motion_value.x_delta) % len(p)
-                new_j = (j - motion_value.y_delta) % len(p[i])
+                new_i = (i - motion_value.x_delta) % len(prior)
+                new_j = (j - motion_value.y_delta) % len(prior[i])
 
                 # Calculate probabilities for staying and moving
-                stay_probability = (1 - self.prob_move) * p[i][j]
-                move_probability = self.prob_move * p[new_i][new_j]
+                stay_probability = (1 - self.prob_move) * prior[i][j]
+                move_probability = self.prob_move * prior[new_i][new_j]
 
                 # Update the probability matrix
-                q[i][j] = move_probability + stay_probability
+                posterior[i][j] = move_probability + stay_probability
 
-        return q
+        return posterior
 
     def compute_posterior(self):
         """Call Computation"""
-        p = self.p
+        p = self.probabilities
         for i in range(len(self.measurements)):
             p = self.move(p, self.movements[i])
             # self.visualize_grid(p)

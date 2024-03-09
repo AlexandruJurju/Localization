@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../MonteCarlo2D/.idea/MonteCarlo2D.iml" filepath="$PROJECT_DIR$/../MonteCarlo2D/.idea/MonteCarlo2D.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MonteCarlo1D.iml" filepath="$PROJECT_DIR$/.idea/MonteCarlo1D.iml" />
     </modules>
   </component>
 </project>
