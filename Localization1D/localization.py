@@ -1,7 +1,7 @@
-from Movement import Movement
+from movement import Movement
 
 
-class MonteCarloLocalization:
+class Localization:
     def __init__(self, world: [str], measurements, movements, sensor_prob_correct):
         self.world = world
         self.measurements = measurements

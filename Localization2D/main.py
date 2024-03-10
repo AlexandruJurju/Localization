@@ -1,4 +1,4 @@
-from markov_localization import MonteCarloLocalization
+from localization import Localization
 from movement import Movement
 
 if __name__ == "__main__":
@@ -12,5 +12,5 @@ if __name__ == "__main__":
     movements = [Movement.STAY, Movement.RIGHT, Movement.RIGHT]
     measurements = ['B', 'W', 'B']
 
-    localization = MonteCarloLocalization(world=colours, measurements=measurements, movements=movements, sensor_prob_correct=1.0)
+    localization = Localization(world=colours, measurements=measurements, movements=movements, sensor_prob_correct=1.0)
     posterior = localization.compute_posterior()

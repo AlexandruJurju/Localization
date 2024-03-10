@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Markov2D.iml" filepath="$PROJECT_DIR$/.idea/Markov2D.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Localization2D.iml" filepath="$PROJECT_DIR$/.idea/Localization2D.iml" />
     </modules>
   </component>
 </project>

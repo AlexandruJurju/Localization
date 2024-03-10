@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from movement import Movement
 
 
-class MonteCarloLocalization:
+class Localization:
     """Performing Bayesian Updating to Produce a Distribution of Likely Positions in the Environment"""
 
     def __init__(self, world, measurements, movements, sensor_prob_correct):
