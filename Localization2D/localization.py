@@ -7,11 +7,12 @@ from movement import Movement
 class Localization:
     """Performing Bayesian Updating to Produce a Distribution of Likely Positions in the Environment"""
 
-    def __init__(self, world, measurements, movements, sensor_prob_correct):
+    def __init__(self, world, measurements, movements, prob_hit, prob_miss):
         self.world = world
         self.measurements = measurements
         self.movements = movements
-        self.sensor_prob_correct = sensor_prob_correct
+        self.prob_hit = prob_hit
+        self.prob_miss = prob_miss
 
         # initialize the Uniform Prior
         pinit = 1.0 / float(len(world)) / float(len(world[0]))
@@ -38,9 +39,9 @@ class Localization:
 
                 # Calculate probability and update posterior matrix
                 if hit:
-                    posterior[i][j] = prior[i][j] * self.sensor_prob_correct
+                    posterior[i][j] = prior[i][j] * self.prob_hit
                 else:
-                    posterior[i][j] = prior[i][j] * (1 - self.sensor_prob_correct)
+                    posterior[i][j] = prior[i][j] * self.prob_miss
 
                 total_probability += posterior[i][j]
 
