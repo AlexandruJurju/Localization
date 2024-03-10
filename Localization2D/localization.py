@@ -5,10 +5,11 @@ from movement import Movement
 
 
 class Localization:
-    def __init__(self, world, measurements, movements, prob_hit, prob_miss):
+    def __init__(self, world, measurements, movements, robot_position, prob_hit, prob_miss):
         self.world = world
         self.measurements = measurements
         self.movements = movements
+        self.robot_position = robot_position
         self.prob_hit = prob_hit
         self.prob_miss = prob_miss
 
@@ -42,15 +43,19 @@ class Localization:
 
         return new_belief
 
-    def move(self, old_belief, motion: [Movement]):
+    def move(self, old_belief, movement: Movement):
         # Initialize new probability matrix
         shifted_belief = [[0.0 for _ in range(len(self.world[0]))] for _ in range(len(self.world))]
+
+        motion_value = movement.value
+
+        self.robot_position[0] = self.robot_position[0] + motion_value.x_delta
+        self.robot_position[1] = self.robot_position[1] + motion_value.y_delta
 
         # Iterate through each cell in the probability matrix
         for i in range(len(old_belief)):
             for j in range(len(old_belief[0])):
                 # Get the x and y delta values for the motion
-                motion_value = motion.value
 
                 # Calculate the new position after applying the motion, considering edge wrapping
                 new_i = (i - motion_value.x_delta) % len(old_belief)
