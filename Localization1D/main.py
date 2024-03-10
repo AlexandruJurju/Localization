@@ -8,5 +8,5 @@ if __name__ == '__main__':
     movements = [Movement.RIGHT, Movement.LEFT]
     measurements = ['W', 'B']
 
-    localization = Localization(world=colours, measurements=measurements, movements=movements, prob_hit=0.8, prob_miss=0.2)
+    localization = Localization(world=colours, measurements=measurements, movements=movements, robot_position=start_position, prob_hit=0.8, prob_miss=0.2)
     posterior = localization.calculate_probabilities()
