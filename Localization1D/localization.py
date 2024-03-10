@@ -10,36 +10,36 @@ class Localization:
         self.probabilities = [1.0 / float(len(world))] * len(world)
         self.show(self.probabilities)
 
-    def move(self, prior, movement: [Movement]):
-        posterior = [0.0 for _ in range(len(self.world))]
+    def move(self, old_belief, movement: [Movement]):
+        new_belief = [0.0 for _ in range(len(self.world))]
 
-        for i in range(len(prior)):
+        for i in range(len(old_belief)):
             movement_value = movement.value
 
-            new_i = (i - movement_value.x_delta) % len(prior)
+            new_i = (i - movement_value.x_delta) % len(old_belief)
 
-            posterior[i] = prior[new_i]
+            new_belief[i] = old_belief[new_i]
 
-        return posterior
+        return new_belief
 
-    def sense(self, prior, world, measurement):
-        posterior = [0.0 for _ in range(len(self.world))]
-        total_probability = 0.0
+    def sense(self, old_belief, world, measurement):
+        new_belief = [0.0 for _ in range(len(self.world))]
+        sigma = 0.0
 
-        for i in range(len(prior)):
+        for i in range(len(old_belief)):
             hit = (measurement == world[i])
 
             if hit:
-                posterior[i] = prior[i] * self.sensor_prob_correct
+                new_belief[i] = old_belief[i] * self.sensor_prob_correct
             else:
-                posterior[i] = prior[i] * (1 - self.sensor_prob_correct)
+                new_belief[i] = old_belief[i] * (1 - self.sensor_prob_correct)
 
-            total_probability += posterior[i]
+            sigma += new_belief[i]
 
-        for i in range(len(posterior)):
-            posterior[i] /= total_probability
+        for i in range(len(new_belief)):
+            new_belief[i] /= sigma
 
-        return posterior
+        return new_belief
 
     def calculate_probabilities(self):
         p = self.probabilities

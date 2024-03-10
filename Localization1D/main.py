@@ -1,5 +1,5 @@
-from movement import Movement
 from localization import Localization
+from movement import Movement
 
 if __name__ == '__main__':
     colours = ['B', 'W', 'B', 'B', 'B']
