@@ -12,5 +12,5 @@ if __name__ == "__main__":
     movements = [Movement.STAY, Movement.RIGHT, Movement.RIGHT]
     measurements = ['B', 'W', 'B']
 
-    localization = Localization(world=colours, measurements=measurements, movements=movements, robot_position=start_position, prob_hit=1.0, prob_miss=0.0)
+    localization = Localization(world=colours, measurements=measurements, movements=movements, robot_position=start_position, prob_hit=.8, prob_miss=0.1)
     posterior = localization.compute_posterior()

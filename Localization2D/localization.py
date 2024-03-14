@@ -74,7 +74,7 @@ class Localization:
             # self.show(p)
 
             p = self.sense(p, self.world, self.measurements[i])
-            # self.visualize_grid(p)
+            self.visualize_grid(p)
             self.show(p)
 
         return p
@@ -85,13 +85,14 @@ class Localization:
         print('[' + ',\n '.join(rows) + ']')
         print("\n")
 
-    @staticmethod
-    def visualize_grid(arr):
+    def visualize_grid(self, arr):
         grid = np.array(arr)
         fig, ax = plt.subplots()
 
         single_color_grid = np.zeros_like(grid)
         ax.imshow(single_color_grid, cmap='Greys', interpolation='none')
+
+        max_indices = np.argwhere(grid == np.max(grid))
 
         for i in range(len(arr)):
             for j in range(len(arr[0])):
@@ -99,8 +100,18 @@ class Localization:
                 ax.text(j, i, round(arr[i][j], 2), ha='center', va='center', color='black')
 
                 # Add borders
-                rect = plt.Rectangle((j - 0.5, i - 0.5), 1, 1, edgecolor='black', linewidth=1, fill=False)
+                rect = plt.Rectangle((j - 0.5, i - 0.5), 1, 1, edgecolor='black', linewidth=2, fill=False)
                 ax.add_patch(rect)
+
+                # Highlight the square where the robot is positioned
+                if (i, j) == tuple(self.robot_position):
+                    rect = plt.Rectangle((j - 0.5, i - 0.5), 1, 1, edgecolor='none', facecolor='lime', linewidth=0, fill=True)
+                    ax.add_patch(rect)
+
+                # Highlight squares containing the max probability
+                if [i, j] in max_indices.tolist():
+                    rect = plt.Rectangle((j - 0.5, i - 0.5), 1, 1, edgecolor='red', facecolor='none', linewidth=2, fill=False)
+                    ax.add_patch(rect)
 
         ax.set_xticks(np.arange(-0.5, len(arr[0]), 1), minor=True)
         ax.set_yticks(np.arange(-0.5, len(arr), 1), minor=True)
@@ -117,3 +128,7 @@ class Localization:
         ax.set_yticklabels([])
 
         plt.show()
+
+
+
+

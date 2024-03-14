@@ -1,1 +1,1 @@
-# NedCurs
+# Localization project
